@@ -40,4 +40,5 @@ for iface in wan lan1; do
     networkctl reconfigure "$iface" || true
 done
 systemctl restart groot-router-qos.service
+systemctl --no-block try-restart mihomo.service || true
 echo "$(date --iso-8601=seconds) persistent rollback complete"

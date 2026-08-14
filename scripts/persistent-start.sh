@@ -90,4 +90,5 @@ done
 touch "$CONFIRMED"
 systemctl stop groot-r8125-paired-rollback.timer
 trap - ERR
+systemctl --no-block try-restart mihomo.service || true
 echo "$(date --iso-8601=seconds) persistent start confirmed"
