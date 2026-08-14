@@ -1,7 +1,7 @@
 [Unit]
 Description=Configure Groot r8125 queues and IRQ affinity
-Wants=network-online.target groot-router-qos.service
-After=network-online.target groot-router-qos.service
+Wants=network-online.target
+After=network-online.target
 Before=mihomo.service
 
 [Service]
