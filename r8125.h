@@ -588,7 +588,7 @@ static inline u32 rtl8125_ethtool_adv_to_mmd_eee_adv_cap2_t(u32 adv)
 #define RSS_SUFFIX ""
 #endif
 
-#define RTL8125_VERSION "9.016.01" NAPI_SUFFIX DASH_SUFFIX REALWOW_SUFFIX PTP_SUFFIX RSS_SUFFIX
+#define RTL8125_VERSION "9.016.01" NAPI_SUFFIX DASH_SUFFIX REALWOW_SUFFIX PTP_SUFFIX RSS_SUFFIX "-PAIRED"
 #define MODULENAME "r8125"
 #define PFX MODULENAME ": "
 
@@ -2209,6 +2209,9 @@ struct rtl8125_tx_ring {
         u16 sw_tail_ptr_reg;
 
         u16 tdsar_reg; /* Transmit Descriptor Start Address */
+
+        atomic64_t packets;
+        atomic64_t bytes;
 };
 
 struct rtl8125_rx_buffer {
@@ -2238,6 +2241,9 @@ struct rtl8125_rx_ring {
 #endif //ENABLE_PAGE_REUSE
 
         u16 rdsar_reg; /* Receive Descriptor Start Address */
+
+        atomic64_t packets;
+        atomic64_t bytes;
 };
 
 struct r8125_napi {

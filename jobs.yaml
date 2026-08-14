@@ -1,0 +1,20 @@
+version: 1
+
+jobs:
+  - name: package-source
+    run: ./scripts/package-source.sh
+
+  - name: upload-source
+    needs: [package-source]
+    run: ./scripts/upload-source.sh
+
+  - name: build
+    needs: [upload-source]
+    run: ./scripts/build-remote.sh
+
+  - name: install-test
+    needs: [build]
+    run: ./scripts/install-test.sh
+
+  - name: status
+    run: ./scripts/status.sh
