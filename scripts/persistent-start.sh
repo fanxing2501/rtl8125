@@ -48,7 +48,7 @@ if [[ "$module_ready" != true ]]; then
     done
 fi
 
-udevadm settle || true
+udevadm settle --timeout=10 || true
 for iface in wan lan1; do
     for _ in $(seq 1 30); do
         [[ -e "/sys/class/net/$iface" ]] && break
