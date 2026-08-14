@@ -70,15 +70,15 @@ set_affinity() {
     echo "$iface vector=$vector irq=$irq cpu=$cpu"
 }
 
-# Keep each ingress RX queue with the opposite port's matching TX completion.
+# Keep RX/NAPI on the fast cores and offload matching TX completions to CPU0-3.
 set_affinity wan 0 4
-set_affinity lan1 16 4
+set_affinity lan1 16 0
 set_affinity wan 1 5
-set_affinity lan1 18 5
+set_affinity lan1 18 1
 set_affinity lan1 0 6
-set_affinity wan 16 6
+set_affinity wan 16 2
 set_affinity lan1 1 7
-set_affinity wan 18 7
+set_affinity wan 18 3
 
 for iface in wan lan1; do
     [[ "$(basename "$(readlink -f "/sys/class/net/$iface/device/driver")")" == r8125 ]]
