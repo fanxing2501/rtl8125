@@ -16,5 +16,9 @@ jobs:
     needs: [build]
     run: ./scripts/install-test.sh
 
+  - name: install-persistent
+    needs: [build]
+    run: ./scripts/install-persistent.sh
+
   - name: status
     run: ./scripts/status.sh

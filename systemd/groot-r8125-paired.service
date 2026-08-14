@@ -1,0 +1,13 @@
+[Unit]
+Description=Persist paired r8125 queues and IRQ affinity
+Wants=network-online.target
+After=network-online.target groot-router-qos.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/groot-r8125-paired-start
+RemainAfterExit=yes
+TimeoutStartSec=180
+
+[Install]
+WantedBy=multi-user.target
