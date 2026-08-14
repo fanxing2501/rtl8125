@@ -1,7 +1,0 @@
-[Unit]
-Description=Automatic rollback for paired r8125 startup
-
-[Timer]
-OnActiveSec=120
-AccuracySec=1s
-Unit=groot-r8125-paired-rollback.service

@@ -1,7 +1,0 @@
-[Unit]
-Description=Rollback an unconfirmed paired r8125 startup
-
-[Service]
-Type=oneshot
-ExecStart=/usr/local/sbin/groot-r8125-paired-rollback
-TimeoutStartSec=120

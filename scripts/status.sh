@@ -3,8 +3,8 @@ set -eu
 
 . ./config.env
 ssh -o BatchMode=yes "$ROUTER_HOST" '
-    printf "service="; systemctl is-enabled groot-r8125-paired.service 2>/dev/null || true
-    printf "state="; systemctl is-active groot-r8125-paired.service 2>/dev/null || true
+    printf "service="; systemctl is-enabled groot-r8125.service 2>/dev/null || true
+    printf "state="; systemctl is-active groot-r8125.service 2>/dev/null || true
     printf "version="; cat /sys/module/r8125/version
     printf "params rx="; cat /sys/module/r8125/parameters/rx_queues
     printf "params tx="; cat /sys/module/r8125/parameters/tx_queues

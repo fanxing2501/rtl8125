@@ -29,11 +29,11 @@ The default value for both parameters is `0`, which retains the upstream
 automatic selection. The research build also exposes per-queue packet and byte
 counters through `ethtool -S`.
 
-Build and guarded installation use `groot jobs build` and
-`groot jobs install-test`. Installation arms a 120-second automatic rollback
-to `r8169` before either PCI device is unbound. A confirmed test can still be
-rolled back manually:
+Build and guarded testing use `groot jobs build` and `groot jobs install-test`.
+Persistent installation uses `groot jobs install-persistent`: it installs the
+module into the running kernel's module tree, disables `r8169`, and rebuilds
+the initramfs so `r8125` is loaded directly with two RX and TX queues.
 
 ```sh
-ssh router@10.0.0.1 sudo /usr/local/sbin/r8125-test-rollback force
+groot jobs install-persistent
 ```
