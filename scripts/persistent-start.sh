@@ -11,6 +11,12 @@ echo "$(date --iso-8601=seconds) persistent start"
 [[ "$(cat /sys/module/r8125/parameters/rx_queues)" == 2 ]]
 [[ "$(cat /sys/module/r8125/parameters/tx_queues)" == 2 ]]
 
+for _ in $(seq 1 30); do
+    [[ -e /sys/class/net/br-lan ]] && break
+    sleep 1
+done
+[[ -e /sys/class/net/br-lan ]]
+
 for iface in wan lan1; do
     for _ in $(seq 1 30); do
         [[ -e "/sys/class/net/$iface" ]] && break
