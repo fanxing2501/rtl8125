@@ -11,22 +11,19 @@ echo "$(date --iso-8601=seconds) persistent start"
 [[ "$(cat /sys/module/r8125/parameters/rx_queues)" == 2 ]]
 [[ "$(cat /sys/module/r8125/parameters/tx_queues)" == 2 ]]
 
-for _ in $(seq 1 30); do
-    [[ -e /sys/class/net/br-lan ]] && break
+for _ in $(seq 1 45); do
+    if [[ -e /sys/class/net/br-lan ]] && \
+       [[ -e /sys/class/net/wan ]] && \
+       [[ -e /sys/class/net/lan1 ]] && \
+       [[ "$(basename "$(readlink -f /sys/class/net/wan/master)")" == br-lan ]] && \
+       [[ "$(basename "$(readlink -f /sys/class/net/lan1/master)")" == br-lan ]]; then
+        break
+    fi
     sleep 1
 done
 [[ -e /sys/class/net/br-lan ]]
-
-for iface in wan lan1; do
-    for _ in $(seq 1 30); do
-        [[ -e "/sys/class/net/$iface" ]] && break
-        sleep 1
-    done
-    [[ -e "/sys/class/net/$iface" ]]
-    ip link set "$iface" master br-lan
-    ip link set "$iface" up
-    networkctl reconfigure "$iface" || true
-done
+[[ "$(basename "$(readlink -f /sys/class/net/wan/master)")" == br-lan ]]
+[[ "$(basename "$(readlink -f /sys/class/net/lan1/master)")" == br-lan ]]
 set_affinity() {
     local iface=$1 vector=$2 cpu=$3 irq
     irq=$(awk -v name="$iface-$vector" '$NF == name {gsub(/:/, "", $1); print $1}' /proc/interrupts)
