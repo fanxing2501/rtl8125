@@ -29,11 +29,11 @@ The default value for both parameters is `0`, which retains the upstream
 automatic selection. The research build also exposes per-queue packet and byte
 counters through `ethtool -S`.
 
-Build and guarded testing use `groot jobs build` and `groot jobs install-test`.
-Persistent installation uses `groot jobs install-persistent`: it installs the
+Build and guarded testing use `mise run build` and `mise run install-test`.
+Persistent installation uses `mise run install-persistent`: it installs the
 module into the running kernel's module tree, disables `r8169`, and rebuilds
 the initramfs so `r8125` is loaded directly with two RX and TX queues.
 
 ```sh
-groot jobs install-persistent
+mise run install-persistent
 ```

@@ -1,0 +1,24 @@
+[settings]
+jobs = 5
+
+[tasks.package-source]
+run = "./scripts/package-source.sh"
+
+[tasks.upload-source]
+depends = ["package-source"]
+run = "./scripts/upload-source.sh"
+
+[tasks.build]
+depends = ["upload-source"]
+run = "./scripts/build-remote.sh"
+
+[tasks.install-test]
+depends = ["build"]
+run = "./scripts/install-test.sh"
+
+[tasks.install-persistent]
+depends = ["build"]
+run = "./scripts/install-persistent.sh"
+
+[tasks.status]
+run = "./scripts/status.sh"
