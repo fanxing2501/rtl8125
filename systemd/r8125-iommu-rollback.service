@@ -1,0 +1,6 @@
+[Unit]
+Description=Restore strict IOMMU after an unconfirmed r8125 test
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/r8125-iommu-rollback

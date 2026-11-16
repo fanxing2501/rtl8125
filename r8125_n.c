@@ -4833,6 +4833,8 @@ rtl8125_init_ring_indexes(struct rtl8125_private *tp)
                 ring->index = i;
                 ring->priv = tp;
                 ring->netdev = tp->dev;
+                atomic64_set(&ring->packets, 0);
+                atomic64_set(&ring->bytes, 0);
 
                 /* reset BQL for queue */
                 netdev_tx_reset_queue(txring_txq(ring));
@@ -4844,6 +4846,8 @@ rtl8125_init_ring_indexes(struct rtl8125_private *tp)
                 ring->index = i;
                 ring->priv = tp;
                 ring->netdev = tp->dev;
+                atomic64_set(&ring->packets, 0);
+                atomic64_set(&ring->bytes, 0);
         }
 
 #ifdef ENABLE_LIB_SUPPORT
@@ -6720,6 +6724,20 @@ static const char rtl8125_gstrings[][ETH_GSTRING_LEN] = {
         "rx_tcam_dropped",
         "tdu",
         "rdu",
+
+        /* per-queue software counters */
+        "txq0_packets",
+        "txq0_bytes",
+        "txq1_packets",
+        "txq1_bytes",
+        "rxq0_packets",
+        "rxq0_bytes",
+        "rxq1_packets",
+        "rxq1_bytes",
+        "rxq2_packets",
+        "rxq2_bytes",
+        "rxq3_packets",
+        "rxq3_bytes",
 };
 #endif //LINUX_VERSION_CODE > KERNEL_VERSION(2,4,22)
 
@@ -6875,6 +6893,19 @@ rtl8125_get_ethtool_stats(struct net_device *dev,
         data[36] = le32_to_cpu(counters->rx_tcam_dropped);
         data[37] = le32_to_cpu(counters->tdu);
         data[38] = le32_to_cpu(counters->rdu);
+
+        data[39] = atomic64_read(&tp->tx_ring[0].packets);
+        data[40] = atomic64_read(&tp->tx_ring[0].bytes);
+        data[41] = atomic64_read(&tp->tx_ring[1].packets);
+        data[42] = atomic64_read(&tp->tx_ring[1].bytes);
+        data[43] = atomic64_read(&tp->rx_ring[0].packets);
+        data[44] = atomic64_read(&tp->rx_ring[0].bytes);
+        data[45] = atomic64_read(&tp->rx_ring[1].packets);
+        data[46] = atomic64_read(&tp->rx_ring[1].bytes);
+        data[47] = atomic64_read(&tp->rx_ring[2].packets);
+        data[48] = atomic64_read(&tp->rx_ring[2].bytes);
+        data[49] = atomic64_read(&tp->rx_ring[3].packets);
+        data[50] = atomic64_read(&tp->rx_ring[3].bytes);
 }
 
 static void
@@ -20048,6 +20079,9 @@ rtl8125_tx_interrupt_noclose(struct rtl8125_tx_ring *ring, int budget)
                 netdev_tx_completed_queue(txring_txq(ring),
                                           total_packets, total_bytes);
 
+                atomic64_add(total_packets, &ring->packets);
+                atomic64_add(total_bytes, &ring->bytes);
+
                 RTLDEV->stats.tx_bytes += total_bytes;
                 RTLDEV->stats.tx_packets+= total_packets;
         }
@@ -20104,6 +20138,9 @@ rtl8125_tx_interrupt_close(struct rtl8125_tx_ring *ring, int budget)
         if (total_packets) {
                 netdev_tx_completed_queue(txring_txq(ring),
                                           total_packets, total_bytes);
+
+                atomic64_add(total_packets, &ring->packets);
+                atomic64_add(total_bytes, &ring->bytes);
 
                 RTLDEV->stats.tx_bytes += total_bytes;
                 RTLDEV->stats.tx_packets+= total_packets;
@@ -20747,6 +20784,8 @@ drop_packet:
         RTLDEV->stats.rx_bytes += total_rx_bytes;
         RTLDEV->stats.rx_packets += total_rx_packets;
         RTLDEV->stats.multicast += total_rx_multicast_packets;
+        atomic64_add(total_rx_packets, &ring->packets);
+        atomic64_add(total_rx_bytes, &ring->bytes);
 
         /*
          * FIXME: until there is periodic timer to try and refill the ring,

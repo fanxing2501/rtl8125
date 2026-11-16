@@ -1,0 +1,28 @@
+version: 1
+
+jobs:
+  - name: package-source
+    run: ./scripts/package-source.sh
+
+  - name: upload-source
+    needs: [package-source]
+    run: ./scripts/upload-source.sh
+
+  - name: build
+    needs: [upload-source]
+    run: ./scripts/build-remote.sh
+
+  - name: download
+    needs: [build]
+    run: ./scripts/download-module.sh
+
+  - name: install-test
+    needs: [build]
+    run: ./scripts/install-test.sh
+
+  - name: status
+    run: ./scripts/status.sh
+
+  - name: iommu-lazy-reboot
+    needs: [upload-source]
+    run: ./scripts/iommu-lazy-reboot.sh

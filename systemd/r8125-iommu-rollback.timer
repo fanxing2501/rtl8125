@@ -1,0 +1,9 @@
+[Unit]
+Description=Automatic rollback for the r8125 lazy IOMMU test
+
+[Timer]
+OnBootSec=900
+Unit=r8125-iommu-rollback.service
+
+[Install]
+WantedBy=timers.target
